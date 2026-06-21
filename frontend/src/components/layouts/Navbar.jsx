@@ -1,0 +1,40 @@
+import { useState } from "react";
+import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
+import SideMenu from "./SideMenu";
+
+const Navbar = ({ activeMenu }) => {
+  const [openSideMenu, setOpenSideMenu] = useState(false);
+  return (
+    <div className="flex gap-5 bg-white border border-b border-gray-200/50 backdrop-blur-sm py-4 px-7 sticky top-0 z-30">
+      <button
+        className="block lg:hidden text-black -mt-1"
+        onClick={() => {
+          setOpenSideMenu(!openSideMenu);
+        }}
+      >
+        {openSideMenu ? (
+          <HiOutlineX className="text-2xl" />
+        ) : (
+          <HiOutlineMenu className="text-2xl" />
+        )}
+      </button>
+
+      <h3 className="text-lg font-semibold tracking-tight cursor-pointer">
+        Apalo's Blog
+      </h3>
+
+      {openSideMenu && (
+        <div className="fixed inset-0 top-[64px] bg-black/30 z-40">
+          <div className="bg-white w-64 h-full shadow-lg">
+            <SideMenu
+              activeMenu={activeMenu}
+              setOpenSideMenu={setOpenSideMenu}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Navbar;

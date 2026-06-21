@@ -1,0 +1,43 @@
+import React from "react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import CustomLegend from "./CustomLegend";
+import CustomTooltip from "./CustomTooltip";
+
+const CustomPieChart = ({ data, colors }) => {
+  return (
+    <ResponsiveContainer>
+        <PieChart>
+            <Pie
+            data={data}
+            dataKey={"count"}
+            nameKey={"name"}
+            cx={"50%"}
+            cy={"50%"}
+            outerRadius={130}
+            innerRadius={100}
+            labelLine={false}
+            >
+                {data.map((entry,index)=>(
+                    <Cell
+                    key={`cell-${index}`}
+                     fill={colors[index% colors.length]}
+                    />
+                   
+                ))}
+            </Pie>
+        <Tooltip content={<CustomTooltip/>}/>
+        <Legend content={<CustomLegend/>}/>
+        </PieChart>
+
+    </ResponsiveContainer>
+  );
+};
+
+export default CustomPieChart;
