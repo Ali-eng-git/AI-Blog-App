@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { LuClock, LuEye } from "react-icons/lu";
+import defualtImg from "../../assets/logo.jpg"
 
 const TagPostCard = ({ post }) => {
     const cleanContent =
@@ -54,7 +55,7 @@ const TagPostCard = ({ post }) => {
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300">
               <img
-                src={post.author?.profileImageUrl}
+                src={post.author?.profileImageUrl || defualtImg}
                 alt={post.author?.name}
                 className="w-full h-full object-cover"
               />

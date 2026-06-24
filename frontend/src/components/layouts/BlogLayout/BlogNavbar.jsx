@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LuSearch } from "react-icons/lu";
 
 import { BLOG_NAVBAR_DATA } from "../../../utils/data";
@@ -11,11 +11,19 @@ import ProfileInfoCard from "../../Cards/ProfileInfoCard";
 import Login from "../../Auth/Login";
 import SignUp from "../../Auth/SignUp";
 import Modal from "../../Modal";
-import AuthModel  from "../../Auth/AuthModel";
+import AuthModel from "../../Auth/AuthModel";
 
 const BlogNavbar = ({ activeMenu }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (!searchQuery.trim()) return;
+
+    navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+  };
   const { user, openAuthForm, setOpenAuthForm, authPage, setAuthPage } =
-  useContext(UserContext);
+    useContext(UserContext);
 
   const [openSideMenu, setOpenSideMenu] = useState(false);
 
@@ -24,7 +32,6 @@ const BlogNavbar = ({ activeMenu }) => {
       {/* NAVBAR */}
       <div className="bg-white sticky top-0 z-50 border-b border-gray-200/60 shadow-sm">
         <div className="container mx-auto flex items-center justify-between gap-5 py-3 px-6">
-
           {/* LEFT */}
           <div className="flex gap-5 items-center">
             <button
@@ -58,9 +65,7 @@ const BlogNavbar = ({ activeMenu }) => {
 
                     <span
                       className={`absolute inset-x-0 bottom-0 h-[2px] bg-sky-500 transition-transform duration-300 origin-left ${
-                        activeMenu === item.path
-                          ? "scale-x-100"
-                          : "scale-x-0"
+                        activeMenu === item.path ? "scale-x-100" : "scale-x-0"
                       } group-hover:scale-x-100`}
                     />
                   </li>
@@ -71,11 +76,31 @@ const BlogNavbar = ({ activeMenu }) => {
 
           {/* RIGHT */}
           <div className="flex items-center gap-6">
-            <button
-              className="p-2 rounded-full hover:bg-sky-50 transition"
-            >
-              <LuSearch className="text-[22px]" />
-            </button>
+            <div className="hidden md:flex items-center w-full max-w-md bg-white border border-gray-200 rounded-full shadow-sm hover:shadow-md focus-within:ring-2 focus-within:ring-sky-200 focus-within:border-sky-400 transition-all duration-300 overflow-hidden">
+              <div className="pl-4 text-gray-400">
+                <LuSearch size={20} />
+              </div>
+
+              <input
+                type="text"
+                placeholder="Search articles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                className="flex-1 px-1 py-2 bg-transparent outline-none text-gray-700 placeholder:text-gray-400"
+              />
+
+              <button
+                onClick={handleSearch}
+                className="bg-gradient-to-r from-sky-500 to-cyan-400 text-white px-3 py-2 font-medium hover:brightness-110 transition-all duration-300"
+              >
+                Search
+              </button>
+            </div>
 
             {!user ? (
               <button

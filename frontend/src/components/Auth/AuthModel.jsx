@@ -6,7 +6,7 @@ import Login from "./Login"
 import SignUp from "./SignUp"
 
 const AuthModel =()=>{
-    const {openAuthForm,setopenAuthForm} = useContext(UserContext)
+    const {openAuthForm,setOpenAuthForm} = useContext(UserContext)
     const [currentPage, setCurrentPage] = useState("login")
 
     return (
@@ -14,7 +14,7 @@ const AuthModel =()=>{
         <Modal
         isOpen={openAuthForm}
         onClose={()=>{
-            setopenAuthForm(false)
+            setOpenAuthForm(false)
             setCurrentPage("login");
         }}
         hideHeader

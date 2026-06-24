@@ -1,11 +1,64 @@
 import { Link } from "react-router-dom";
-import { LuEye, LuClock } from "react-icons/lu";
+import { LuEye, LuClock, LuHeart } from "react-icons/lu";
 import MarkdownRenderer from "../markdownRendere";
+import { useEffect, useState } from "react";
+import axiosInstance from "../../utils/axiosInstance";
+import { API_PATHS } from "../../utils/apiPaths";
 
 const PostDetails = ({ post }) => {
-  if (!post) return null;
+  const [likes,setLikes] = useState(post?.likes || 0)
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post?.likes || 0);
 
-  
+  const handleLike = async () => {
+    // Check authentication
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please login to like this post");
+      return;
+    }
+
+    // Prevent duplicate likes
+    if (liked) {
+      alert("You already liked this post");
+      return;
+    }
+
+    try {
+      await axiosInstance.post(API_PATHS.POSTS.LIKE(post._id));
+
+      // Optimistic UI update
+      setLikesCount((prev) => prev + 1);
+      setLiked(true);
+
+      const likedPosts = JSON.parse(localStorage.getItem("likedPosts")) || [];
+
+      localStorage.setItem(
+        "likedPosts",
+        JSON.stringify([...likedPosts, post._id]),
+      );
+
+      alert("Post liked ❤️");
+    } catch (error) {
+      console.log(error);
+      alert("Failed to like post");
+    }
+  };
+
+  useEffect(() => {
+    if (!post) return;
+
+    const likedPosts = JSON.parse(localStorage.getItem("likedPosts")) || [];
+
+    setLiked(likedPosts.includes(post._id));
+    setLikesCount(post.likes || 0);
+  }, [post]);
+  useEffect(() => {
+    setLikes(post?.likes || 0);
+  }, [post]);
+
+  if (!post) return null;
 
   return (
     <div className="bg-white min-h-screen">
@@ -41,7 +94,7 @@ const PostDetails = ({ post }) => {
           </h1>
 
           {/* META */}
-          <div className="flex items-center gap-6 mt-4 text-sm text-white/80">
+          <div className="flex flex-wrap items-center gap-6 mt-4 text-sm text-white/80">
             <span>{post.author?.name}</span>
             <span className="flex items-center gap-1">
               <LuEye /> {post.views} views
@@ -66,7 +119,19 @@ const PostDetails = ({ post }) => {
           <div className="my-10 border-t border-gray-200" />
 
           {/* COMMENTS SECTION */}
-     
+          <button
+            onClick={handleLike}
+            disabled={liked}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all
+    ${
+      liked
+        ? "bg-red-500 text-white cursor-not-allowed"
+        : "bg-white/20 hover:bg-red-500 hover:text-white"
+    }`}
+          >
+            <LuHeart className={liked ? "fill-current" : ""} size={18} />
+            {likesCount}
+          </button>
         </article>
 
         {/* SIDEBAR */}

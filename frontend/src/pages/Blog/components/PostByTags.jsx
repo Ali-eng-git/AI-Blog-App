@@ -16,33 +16,24 @@ import NewsletterCard from "../../../components/postByTag/NewsletterCard";
 
 const PostByTags = () => {
   const { tag, tagName } = useParams();
-  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("latest");
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [popularPosts, setPopularPosts] = useState([])
-
-
+  const [popularPosts, setPopularPosts] = useState([]);
 
   const POSTS_PER_PAGE = 6;
 
-const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1);
 
-const totalPages = Math.ceil(posts?.length / POSTS_PER_PAGE);
 
-const paginatedPosts = posts?.slice(
-  (page - 1) * POSTS_PER_PAGE,
-  page * POSTS_PER_PAGE
-);
-
-const getPopularPost = async()=>{
-  try {
-    const res = await axiosInstance.get(API_PATHS.POSTS.GET_TRENDING_POSTS)
-    setPopularPosts(res.data)
-  } catch (error) {
-    console.log("Error fetching popular post",error)
-  }
-}
+  const getPopularPost = async () => {
+    try {
+      const res = await axiosInstance.get(API_PATHS.POSTS.GET_TRENDING_POSTS);
+      setPopularPosts(res.data);
+    } catch (error) {
+      console.log("Error fetching popular post", error);
+    }
+  };
 
   const getPostByTag = async () => {
     try {
@@ -60,36 +51,38 @@ const getPopularPost = async()=>{
     }
   };
 
-  const filteredPosts = [...posts]
-    .filter((post) =>
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "oldest":
-          return new Date(a.updatedAt) - new Date(b.updatedAt);
+  const filteredPosts = [...posts].sort((a, b) => {
+    switch (sortBy) {
+      case "oldest":
+        return new Date(a.updatedAt) - new Date(b.updatedAt);
 
-        case "popular":
-          return b.views - a.views;
+      case "popular":
+        return b.views - a.views;
 
-        case "title":
-          return a.title.localeCompare(b.title);
+      case "title":
+        return a.title.localeCompare(b.title);
 
-        case "latest":
-        default:
-          return new Date(b.updatedAt) - new Date(a.updatedAt);
-      }
-    });
+      case "latest":
+      default:
+        return new Date(b.updatedAt) - new Date(a.updatedAt);
+    }
+  });
+    const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
 
-  console.log("Filtered post by the sortby",sortBy,filteredPosts);
+  const paginatedPosts = filteredPosts.slice(
+    (page - 1) * POSTS_PER_PAGE,
+    page * POSTS_PER_PAGE,
+  );
+
+  console.log("Filtered post by the sortby", sortBy, filteredPosts);
   useEffect(() => {
     getPostByTag();
-    console.log(posts)
+    console.log(posts);
   }, [tagName]);
 
-  useEffect(()=>{
-    getPopularPost()
-  },[])
+  useEffect(() => {
+    getPopularPost();
+  }, []);
 
   if (loading) {
     return (
@@ -123,40 +116,34 @@ const getPopularPost = async()=>{
   }
   return (
     <BlogLayout>
-      <Hero tag={tag} tagName={tagName} posts={posts} />
-      <SearchAndSort
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-      />
+      <Hero  tagName={tagName} posts={posts} />
+      <SearchAndSort sortBy={sortBy} setSortBy={setSortBy} />
 
-<div className="max-w-7xl mx-auto px-5 py-16 ">
-  <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div className="max-w-7xl mx-auto px-5 py-16 ">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* POSTS */}
+          <div className="lg:col-span-8">
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+              {paginatedPosts?.map((post) => (
+                <TagPostCard key={post._id} post={post} />
+              ))}
+            </div>
 
-    {/* POSTS */}
-    <div className="lg:col-span-8">
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-        {paginatedPosts?.map((post) => (
-          <TagPostCard key={post._id} post={post} />
-        ))}
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+          </div>
+
+          {/* SIDEBAR */}
+          <aside className="lg:col-span-4 space-y-8">
+            <TrendingTags />
+            <PopularPosts posts={popularPosts} />
+            <NewsletterCard />
+          </aside>
+        </div>
       </div>
-
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-      />
-    </div>
-
-    {/* SIDEBAR */}
-   <aside className="lg:col-span-4 space-y-8">
-      <TrendingTags />
-      <PopularPosts posts={popularPosts} />
-      <NewsletterCard />
-    </aside>
-  </div>
-</div>
 
       <BlogFooter />
     </BlogLayout>

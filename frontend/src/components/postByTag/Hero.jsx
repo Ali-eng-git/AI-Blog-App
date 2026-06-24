@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Hero = ({tag,tagName,posts}) => {
+const Hero = ({tagName,posts}) => {
   return (
     <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-blue-500 to-sky-500 p-8 md:p-12 text-white mb-12">
 
@@ -39,16 +39,6 @@ const Hero = ({tag,tagName,posts}) => {
 
         <p className="text-blue-200">
           Articles
-        </p>
-      </div>
-
-      <div>
-        <h2 className="text-3xl font-bold capitalize">
-          {tag}
-        </h2>
-
-        <p className="text-blue-200">
-          Category Type
         </p>
       </div>
 

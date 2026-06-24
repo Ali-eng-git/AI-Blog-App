@@ -25,16 +25,14 @@ const Comments = () => {
     try {
       setAiLoading(true);
       setAiReply("");
+      console.log(comment.author?.name, comment.content);
 
-      const res = await axiosInstance.post(
-        API_PATHS.AI.GENERATE_BLOG_REPLY,
-        {
-          author: comment.author?.name,
-          content: comment.content,
-        },
-      );
+      const res = await axiosInstance.post(API_PATHS.AI.GENERATE_BLOG_REPLY, {
+        author: comment.author?.name,
+        content: comment.content,
+      });
 
-      setAiReply(res.data);
+      setAiReply(res.data.reply);
     } catch (error) {
       console.error(error);
 
@@ -45,6 +43,36 @@ const Comments = () => {
       }
     } finally {
       setAiLoading(false);
+    }
+  };
+
+  const handleSaveAiReply = async () => {
+    try {
+      if (!aiModal.comment || !aiReply) return;
+
+      await axiosInstance.post(
+        API_PATHS.COMMENTS.ADD(aiModal.comment.post._id),
+        {
+          content: aiReply,
+          parentComment: aiModal.comment._id,
+        },
+      );
+
+      toast.success("AI reply posted successfully");
+
+      // refresh comments list
+      fetchComments();
+
+      // close modal
+      setAiModal({
+        open: false,
+        comment: null,
+      });
+
+      setAiReply("");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to post AI reply");
     }
   };
 
@@ -66,11 +94,13 @@ const Comments = () => {
   // ---------------- DELETE COMMENT ----------------
   const deleteComment = async (id) => {
     try {
-      await axiosInstance.delete(API_PATHS.COMMENTS.DELETE(id));
+      if (confirm("Do you realy want to delete this comment")) {
+        await axiosInstance.delete(API_PATHS.COMMENTS.DELETE(id));
 
-      toast.success("Comment deleted");
+        toast.success("Comment deleted");
 
-      setComments((prev) => prev.filter((c) => c._id !== id));
+        setComments((prev) => prev.filter((c) => c._id !== id));
+      }
     } catch (error) {
       console.error(error);
       toast.error("Failed to delete comment");
@@ -85,7 +115,7 @@ const Comments = () => {
   const CommentCard = ({ comment, depth = 0 }) => {
     return (
       <div
-        className={`bg-white rounded-xl border border-gray-100 shadow-sm p-4 ${
+        className={`group bg-white rounded-xl border border-gray-100 shadow-sm p-4 ${
           depth > 0 ? "ml-8 mt-3 border-l-4 border-sky-200" : ""
         }`}
       >
@@ -112,7 +142,8 @@ const Comments = () => {
               deleteComment(comment._id);
             }}
           >
-            <LuTrash2 /> <span className="hidden md:block">Delete</span>
+            <LuTrash2 />{" "}
+            <span className="hidden md:block text-black">Delete</span>
           </button>
         </div>
 
@@ -199,7 +230,14 @@ const Comments = () => {
 
             {aiReply && (
               <div className="mt-4 bg-gray-50 border rounded-lg p-3 text-sm">
-                {aiReply}
+                <p>{aiReply}</p>
+
+                <button
+                  onClick={handleSaveAiReply}
+                  className="mt-3 bg-green-600 text-white px-3 py-2 rounded-lg text-xs"
+                >
+                  Comment this reply
+                </button>
               </div>
             )}
           </div>

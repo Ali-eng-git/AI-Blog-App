@@ -123,24 +123,40 @@ const deleteComment = async (req, res) => {
     const { commentId } = req.params;
 
     const comment = await Comment.findById(commentId);
+
     if (!comment) {
-        return res.status(404).json({message:"Comment not found"})
+      return res.status(404).json({
+        message: "Comment not found",
+      });
     }
 
-    // Delete the comment
-    await Comment.deleteOne({_id:commentId})
+    // Delete all nested replies
+    await deleteRepliesRecursively(commentId);
 
-    // Delete all replies to this comment
-    await Comment.deleteMany({parentComment:commentId})
+    // Delete the parent comment itself
+    await Comment.findByIdAndDelete(commentId);
 
-    return res.status(200).json({message:"Comment deleted"})
+    return res.status(200).json({
+      message: "Comment deleted successfully",
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Failed to add a comment", error: error.message });
+    return res.status(500).json({
+      message: "Failed to delete comment",
+      error: error.message,
+    });
   }
 };
 
+const deleteRepliesRecursively = async (commentId) => {
+  const replies = await Comment.find({
+    parentComment: commentId,
+  });
+
+  for (const reply of replies) {
+    await deleteRepliesRecursively(reply._id);
+    await Comment.findByIdAndDelete(reply._id);
+  }
+};
 
 module.exports ={
     addComment,
