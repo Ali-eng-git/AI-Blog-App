@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { LuEye, LuClock, LuHeart } from "react-icons/lu";
-import MarkdownRenderer from "../markdownRendere";
+import MarkdownRenderer from "../MarkdownRendere";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";

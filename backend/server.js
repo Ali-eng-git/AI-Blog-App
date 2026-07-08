@@ -27,9 +27,7 @@ connectDB()
 app.use(logger);
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+
 
 //Routes
 app.use("/api/auth",authRoutes);
@@ -44,16 +42,17 @@ app.use("/uploads",express.static(path.join(__dirname,"uploads"),{}))
 
 
 // Start Server
-const PORT = process.env.PORT || "8808";
+const PORT = process.env.PORT || "8888";
 
 // logging error
-app.use(errorHandler);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

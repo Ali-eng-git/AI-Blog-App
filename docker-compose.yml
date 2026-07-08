@@ -1,0 +1,13 @@
+services:
+  backend:
+    build: .
+    image: ai-blog-app
+    container_name: blog-app-container
+
+    ports:
+      - "8888:8888"
+
+    env_file:
+      - backend/utils/.env
+
+    restart: unless-stopped
