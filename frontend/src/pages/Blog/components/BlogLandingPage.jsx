@@ -29,7 +29,7 @@ const getLandingPageData = async (page = 1) => {
       `${API_PATHS.POSTS.GET_ALL}?page=${page}`
     );
 
-    console.log("All of the api data",res.data)
+
 
     const posts = res.data.posts || [];
 
@@ -44,7 +44,7 @@ const getLandingPageData = async (page = 1) => {
     setTotalPages(res.data.totalPages);
 
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching landing page data:", error.message);
   } finally {
     setLoading(false);
   }

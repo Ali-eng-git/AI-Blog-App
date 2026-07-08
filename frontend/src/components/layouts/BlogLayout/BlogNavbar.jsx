@@ -47,7 +47,7 @@ const BlogNavbar = ({ activeMenu }) => {
 
             <Link to="/">
               <h3 className="text-lg font-semibold tracking-tight text-gray-800">
-                Apalo's Blog
+                Inkstack 
                 <span className="text-sky-500">.</span>
               </h3>
             </Link>

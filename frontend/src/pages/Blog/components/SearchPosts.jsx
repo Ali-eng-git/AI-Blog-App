@@ -24,7 +24,7 @@ const SearchPosts = () => {
 
       setPosts(response.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error searching posts:", error.message);
     } finally {
       setLoading(false);
     }

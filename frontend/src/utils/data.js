@@ -38,12 +38,12 @@ export const BLOG_NAVBAR_DATA = [
     id: "02",
     label: "React JS",
     icon: LuTag,
-    path: "/tag/React",
+    path: "/tag/react",
   },
   {
     id: "03",
     label: "Next JS",
     icon: LuTag,
-    path: "/tag/Next.js",
+    path: "/tag/next",
   },
 ];

@@ -31,7 +31,7 @@ const PostByTags = () => {
       const res = await axiosInstance.get(API_PATHS.POSTS.GET_TRENDING_POSTS);
       setPopularPosts(res.data);
     } catch (error) {
-      console.log("Error fetching popular post", error);
+      console.error("Error fetching popular post", error.message);
     }
   };
 
@@ -42,10 +42,9 @@ const PostByTags = () => {
       const res = await axiosInstance.get(
         `${API_PATHS.POSTS.GET_BY_TAG(tagName)}`,
       );
-      console.log(res.data);
       setPosts(res.data);
     } catch (error) {
-      console.log("Error fethcing post by tag", error);
+      console.error("Error fetching post by tag", error.message);
     } finally {
       setLoading(false);
     }
@@ -74,10 +73,8 @@ const PostByTags = () => {
     page * POSTS_PER_PAGE,
   );
 
-  console.log("Filtered post by the sortby", sortBy, filteredPosts);
   useEffect(() => {
     getPostByTag();
-    console.log(posts);
   }, [tagName]);
 
   useEffect(() => {

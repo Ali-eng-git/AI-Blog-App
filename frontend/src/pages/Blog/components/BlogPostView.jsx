@@ -25,11 +25,10 @@ const BlogPostView = () => {
         `${API_PATHS.COMMENTS.GET_ALL_BY_POST(postID)}`,
       );
       setComments(commentRes.data);
-      console.log(commentRes.data)
+
       setPost(res.data);
-      console.log(post)
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching post:", err);
     } finally {
       setLoading(false);
     }
@@ -60,7 +59,7 @@ const BlogPostView = () => {
 
       setCommentText("");
     } catch (err) {
-      console.log("Comment error:", err);
+      console.error("Comment error:", err);
     } finally {
       setLoadingComment(false);
     }

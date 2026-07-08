@@ -29,7 +29,6 @@ const generateBlogPost = async (req, res) => {
     let rawText= (await response).text;
     return res.status(200).json(rawText)
   } catch (error) {
-    console.log(error)
     return res
       .status(500)
       .json({ message: "Failed to generate blog post", error: error.message });
